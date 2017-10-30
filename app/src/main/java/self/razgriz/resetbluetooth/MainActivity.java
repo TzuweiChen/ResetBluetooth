@@ -2,6 +2,7 @@ package self.razgriz.resetbluetooth;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -22,10 +23,20 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        intent.setData(Uri.fromParts(PACKAGE, PACKAGE_NAME_ANDROID_BLUETOOTH, null));
-        startActivityForResult(intent, REQUEST_CODE_BLUETOOTH_SETTING);
+        SharedPreferences sharedPreferences = getSharedPreferences("updateTime", MODE_APPEND);
+        long current = System.currentTimeMillis();
+
+        boolean active = current - sharedPreferences.getLong("updateAt", 0) < 1000;
+        sharedPreferences.edit().putLong("updateAt", active ? 0 : current).apply();
+
+        if (active) {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.fromParts(PACKAGE, PACKAGE_NAME_ANDROID_BLUETOOTH, null));
+            startActivityForResult(intent, REQUEST_CODE_BLUETOOTH_SETTING);
+        } else {
+            MainActivity.this.finish();
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package self.razgriz.resetbluetooth;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -23,7 +24,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("updateTime", MODE_APPEND);
+        SharedPreferences sharedPreferences = getSharedPreferences("updateTime", Context.MODE_PRIVATE);
         long current = System.currentTimeMillis();
 
         boolean active = current - sharedPreferences.getLong("updateAt", 0) < 1000;
